@@ -12,6 +12,7 @@ import EmbeddingPage from './Embedding/Embed.html';
 import Icon from "../Icons/icon";
 import Linkify from './Linkify';
 import h, { type EscapedHtml, hFragment, isEscaped } from '../globals/jsx';
+import {tweetTemplate, TwitterComponent} from './Embedding/Twitter/TwitterComponent';
 import Time from '../Miscellaneous/Time';
 /*
  * decaffeinate suggestions:
@@ -635,6 +636,28 @@ var Embedding = {
           }
 
           const {tweet} = req.response;
+		  if (!customElements.get('tweet-embed')) {
+			const _template = document.createElement('template');
+			_template.id = 'element-tweet-embed-template';
+			_template.innerHTML = tweetTemplate
+			document.head.appendChild(_template);
+		  	customElements.define(
+		  	  "tweet-embed",
+		  	  class extends HTMLElement {
+		  	    constructor() {
+		  	      super();
+		  		  const template = document.getElementById('element-tweet-embed-template').content
+		  	      const shadowRoot = this.attachShadow({ mode: "open" }).appendChild(
+		  	        template.cloneNode(true),
+		  	      );
+		  	    }
+		  	  },
+		  	);
+		  }
+		  const comp = TwitterComponent(tweet);
+		  el.firstChild.outerHTML = comp.innerHTML;
+          el.style = 'white-space: pre-line';
+		  return
 
           async function getReplies(tweet) {
             if (!tweet?.replying_to_status) {
