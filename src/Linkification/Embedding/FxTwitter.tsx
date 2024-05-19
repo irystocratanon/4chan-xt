@@ -193,7 +193,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
             <a href={`https://twitter.com/intent/tweet?in_reply_to=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
               <span class="fxt-replies">
                 {Icon.raw("comment")}
-                {tweet.likes.toLocaleString()}
+                {tweet.replies.toLocaleString()}
               </span>
             </a>
             <a href={`https://twitter.com/intent/retweet?tweet_id=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
@@ -205,7 +205,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
             <a href={`https://twitter.com/intent/like?tweet_id=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
               <span class="fxt-likes">
                 {Icon.raw("heart")}
-                {tweet.replies.toLocaleString()}
+                {tweet.likes.toLocaleString()}
               </span>
             </a>
           </div>
