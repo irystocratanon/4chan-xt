@@ -186,12 +186,12 @@ const Config = {
       ],
       'Resolve Tweet Replies': [
         false,
-        '',
+		  'Display a single tweet from the thread/conversation',
         3
       ],
       'Resolve all Tweet Replies': [
         false,
-        'Resolves the entire conversation',
+		  'Display the entire thread/conversation',
         4
       ]
     },

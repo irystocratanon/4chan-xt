@@ -158,82 +158,69 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
           {...media}
         </div>
       </div>;
-
-      return <><hr /><blockquote>
-        <div style="display: flex;padding-bottom: 1em;">
-          <a href={tweet.url}>
-            <div>
-              <img src={tweet.author.avatar_url} style="width: 24px;transform: translateX(-50%) translateY(-50%);border-radius: 9999px;" />
-            </div>
-            <div style="margin: -2.25em 0 0 1em;">{tweet.author.name} (@{tweet.author.screen_name}) {renderDate(tweet)}</div>
-          </a>
-        </div>
-        <p lang={tweet?.lang || 'en'} dir="ltr" style="margin-top: 0">{tweet.text}</p>
-        {...renderMedia(tweet)}
-        {quote_poll}
-        {quote_nested}
-        {quote_translation}
-      </blockquote></>
     }
 
     let repliesJsx: EscapedHtml[] = [];
     if (replies.length > 1) {
       repliesJsx.push({ innerHTML: "<em>Replying To</em><br/>", [isEscaped]: true });
       for (let i = replies.length - 1; i > 0; i--) {
-        repliesJsx.push(renderQuote(replies[i], true));
+        repliesJsx.push(renderArticle(replies[i]));
       }
     }
 
-    const media = renderMedia(tweet);
-    const quote = (tweet?.quote) ? renderQuote(tweet.quote) : ''
+    function renderArticle(tweet): EscapedHtml {
+      const media = renderMedia(tweet);
+      const quote = (tweet?.quote) ? renderQuote(tweet.quote) : ''
 
-    const poll = (tweet?.poll) ? renderPoll(tweet) : '';
-    const created_at = renderDate(tweet);
+      const poll = (tweet?.poll) ? renderPoll(tweet) : '';
+      const created_at = renderDate(tweet);
+      return <article class="fxt-card">
+        <a class="fxt-meta"  href={tweet.author.url} title={tweet.author.description} target="_blank"
+          referrerpolicy="no-referrer">
+          <div class="fxt-meta_profile">
+            <img src={tweet.author.avatar_url} referrerpolicy="no-referrer" />
+          </div>
+          <div class="fxt-meta_author">
+            <span class="fxt-meta_author_username">{tweet.author.name}</span>
+            <span class="fxt-meta_author_account">@{tweet.author.screen_name}</span>
+          </div>
+          {/*<a href={tweet.url} title="Open tweet in a new tab"><i class="fa-solid fa-up-right-from-square"></i></a> */}
+        </a>
+        {(topTranslation) ? translation : ''}
+        <div class="fxt-text">{tweet.text}</div>
+        {(!topTranslation) ? translation : ''}
+        <div class="fxt-media_container">
+          {poll}
+          {...media}
+        </div>
+        {quote}
+        <div class="fxt-stats">
+          <div class="fxt-stats_time">{created_at}</div>
+          <div class="fxt-stats_meta">
+            <a href={`https://twitter.com/intent/tweet?in_reply_to=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
+              <span class="fxt-replies">
+                {Icon.raw("comment")}
+                {tweet.likes.toLocaleString()}
+              </span>
+            </a>
+            <a href={`https://twitter.com/intent/retweet?tweet_id=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
+              <span class="fxt-reposts">
+                {Icon.raw("shuffle")}
+                {tweet.retweets.toLocaleString()}
+              </span>
+            </a>
+            <a href={`https://twitter.com/intent/like?tweet_id=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
+              <span class="fxt-likes">
+                {Icon.raw("heart")}
+                {tweet.replies.toLocaleString()}
+              </span>
+            </a>
+          </div>
+        </div>
+      </article>
+    }
 
-    const innerHTML: EscapedHtml = <article class="fxt-card">
-      <a class="fxt-meta"  href={tweet.author.url} title={tweet.author.description} target="_blank"
-        referrerpolicy="no-referrer">
-        <div class="fxt-meta_profile">
-          <img src={tweet.author.avatar_url} referrerpolicy="no-referrer" />
-        </div>
-        <div class="fxt-meta_author">
-          <span class="fxt-meta_author_username">{tweet.author.name}</span>
-          <span class="fxt-meta_author_account">@{tweet.author.screen_name}</span>
-        </div>
-        {/*<a href={tweet.url} title="Open tweet in a new tab"><i class="fa-solid fa-up-right-from-square"></i></a> */}
-      </a>
-      {(topTranslation) ? translation : ''}
-      <div class="fxt-text">{tweet.text}</div>
-      {(!topTranslation) ? translation : ''}
-      <div class="fxt-media_container">
-        {poll}
-        {...media}
-      </div>
-      {quote}
-      <div class="fxt-stats">
-        <div class="fxt-stats_time">{created_at}</div>
-        <div class="fxt-stats_meta">
-          <a href={`https://twitter.com/intent/tweet?in_reply_to=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
-            <span class="fxt-replies">
-              {Icon.raw("comment")}
-              {tweet.likes.toLocaleString()}
-            </span>
-          </a>
-          <a href={`https://twitter.com/intent/retweet?tweet_id=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
-            <span class="fxt-reposts">
-              {Icon.raw("shuffle")}
-              {tweet.retweets.toLocaleString()}
-            </span>
-          </a>
-          <a href={`https://twitter.com/intent/like?tweet_id=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
-            <span class="fxt-likes">
-              {Icon.raw("heart")}
-              {tweet.replies.toLocaleString()}
-            </span>
-          </a>
-        </div>
-      </div>
-    </article>;
+    const innerHTML: EscapedHtml = <>{...repliesJsx}{renderArticle(tweet)}</>;
 
 
     /*<>
@@ -249,12 +236,6 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
       {Icon.raw("comment")}{tweet?.replies || 0}&nbsp;{Icon.raw("shuffle")}{tweet?.retweets || 0}&nbsp;{Icon.raw("heart")}{tweet?.likes || 0}
     </>;*/
 
-    // @ts-ignore
-    // el.firstChild.innerHTML = innerHTML.innerHTML;
-    // @ts-ignore
-    // el.style = 'white-space: pre-line';
-    // Linkify.process(el.firstChild);
-
     el.innerHTML = innerHTML.innerHTML;
     const linkifyNodes = [
       ...el.getElementsByClassName('fxt-text'),
@@ -268,6 +249,13 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
     el.style.height = 'fit-content';
     el.style.width = 'fit-content';
     el.style.overflow= 'auto';
+    if (repliesJsx.length > 0) {
+      if (el.scrollHeight > 600) {
+        el.style.height = '600px';
+      }
+      const lastTweet = Array.from(document.querySelectorAll('article.fxt-card')).pop();
+      el.scrollTo({top: lastTweet.getBoundingClientRect().y})
+    }
   });
   return el;
 }
