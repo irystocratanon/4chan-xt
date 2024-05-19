@@ -46,42 +46,24 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
     const replies = (!shouldResolveReplies) ? [] : await getReplies(tweet);
 
     function renderMedia(tweet): EscapedHtml[] {
+      let photos = 0;
       return tweet.media?.all?.map(media => {
         switch (media.type) {
           case 'photo':
+            photos += 1;
             return <div class="fxt-media">
-              <img src={media.url} alt={media.altText} width={media.width} height={media.height}
-                referrerpolicy="no-referrer" />
+              <a href={`${tweet.url}/photo/${photos}`} target="_blank" referrerpolicy="no-referrer"><img src={media.url} alt={media.altText} width={media.width} height={media.height}
+                referrerpolicy="no-referrer" /></a>
             </div>;
           case 'video':
           case 'gif':
             return <div class="fxt-media">
-              <video controls width={media.width} height={media.height} poster={media.thumbnail_url} >
+              <video controls width={media.width} height={media.height} poster={media.thumbnail_url} loop={media.type === 'gif'} >
                 <source src={media.url} type={media.format} />
               </video>
             </div>
         }
       }) || [];
-
-      const mediaItems = tweet?.media?.all || [];
-      let media = [];
-      let photos = 1;
-      for (let i = 0; i < mediaItems.length; i++) {
-        const mediaItem = mediaItems[i];
-        switch (mediaItem.type) {
-          case 'photo':
-            media.push(<a target="_blank" href={`${tweet.url}/photo/${photos}`}>
-              <img src={mediaItem.url} referrerpolicy="no-referrer" style="max-width: 80vw; max-height: 80vh;" />
-            </a>);
-            photos += 1;
-            break;
-          case 'video':
-          case 'gif':
-            media.push(<video controls={true} preload="auto" src={mediaItem.url} style="max-width: 80vw; max-height: 80vh;" loop={mediaItem.type === 'gif'} />)
-            break;
-        }
-      }
-      return media;
     }
 
     function renderDate(tweet) {
