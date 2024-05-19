@@ -207,18 +207,24 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
       <div class="fxt-stats">
         <div class="fxt-stats_time">{created_at}</div>
         <div class="fxt-stats_meta">
-          <span class="fxt-likes">
-            {Icon.raw("comment")}
-            {tweet.likes.toLocaleString()}
-          </span>
-          <span class="fxt-reposts">
-            {Icon.raw("shuffle")}
-            {tweet.retweets.toLocaleString()}
-          </span>
-          <span class="fxt-replies">
-            {Icon.raw("heart")}
-            {tweet.replies.toLocaleString()}
-          </span>
+          <a href={`https://twitter.com/intent/tweet?in_reply_to=${tweet.id}`}>
+            <span class="fxt-replies">
+              {Icon.raw("comment")}
+              {tweet.likes.toLocaleString()}
+            </span>
+          </a>
+          <a href={`https://twitter.com/intent/retweet?tweet_id=${tweet.id}`}>
+            <span class="fxt-reposts">
+              {Icon.raw("shuffle")}
+              {tweet.retweets.toLocaleString()}
+            </span>
+          </a>
+          <a href={`https://twitter.com/intent/like?tweet_id=${tweet.id}`}>
+            <span class="fxt-likes">
+              {Icon.raw("heart")}
+              {tweet.replies.toLocaleString()}
+            </span>
+          </a>
         </div>
       </div>
     </article>;
