@@ -233,7 +233,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
         el.style.height = '600px';
       }
       const lastTweet = Array.from(document.querySelectorAll('article.fxt-card')).pop();
-      el.scrollTo({top: lastTweet.getBoundingClientRect().y})
+      el.scrollTo({top: lastTweet.getBoundingClientRect().y-700})
     }
   });
   return el;
