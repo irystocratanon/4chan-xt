@@ -146,6 +146,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
             <span class="fxt-quote_meta_author_account">@{tweet.author.screen_name}</span>
           </div>
         </div>
+        <div class="fxt-quote-text">{tweet.text}</div>
         <div class="fxt-quote_media_container">
           {quote_poll}
           {...media}
@@ -250,7 +251,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
     // Linkify.process(el.firstChild);
 
     el.innerHTML = innerHTML.innerHTML;
-    for (const textNode of el.getElementsByClassName('fxt-text')) {
+    for (const textNode of [...el.getElementsByClassName('fxt-text'), ...el.getElementsByClassName('fxt-quote-text')]) {
       Linkify.process(textNode);
     }
     el.style.height = 'fit-content';
