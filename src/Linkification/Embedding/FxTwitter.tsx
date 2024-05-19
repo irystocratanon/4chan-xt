@@ -47,11 +47,11 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
 
     function renderMedia(tweet): EscapedHtml[] {
       let photos = 0;
-      return tweet.media?.all?.map(media => {
+      return tweet.media?.all?.map((media,i) => {
         switch (media.type) {
           case 'photo':
             photos += 1;
-            return <div class="fxt-media">
+            return <div class="fxt-media" style={(i == 0 && tweet.media.all.length < 5 && tweet.media.all.length > 2) ? `grid-column:1/${(tweet.media.all.length%2==0) ? tweet.media.all.length/2 : tweet.media.all.length};grid-row:1/${(tweet.media.all.length%2==0) ? tweet.media.all.length/2 : tweet.media.all.length};` : ''}>
               <a href={`${tweet.url}/photo/${photos}`} target="_blank" referrerpolicy="no-referrer"><img src={media.url} alt={media.altText} width={media.width} height={media.height}
                 referrerpolicy="no-referrer" /></a>
             </div>;
@@ -147,7 +147,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
         </div>
         <div class="fxt-quote-text">{tweet.text}</div>
         {(!topTranslation) ? quote_translation : ''}
-        <div class="fxt-quote_media_container">
+        <div class="fxt-quote_media_container" style={(media.length < 5 && media.length > 2) ? `grid-template-columns:repeat(${(media.length%2==0) ? media.length/2 : media.length}, 1fr);` : ''}>
           {quote_poll}
           {...media}
         </div>
@@ -182,7 +182,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
         {(topTranslation) ? translation : ''}
         <div class="fxt-text">{tweet.text}</div>
         {(!topTranslation) ? translation : ''}
-        <div class="fxt-media_container">
+        <div class="fxt-media_container" style={(media.length < 5 && media.length > 2) ? `grid-template-columns:repeat(${(media.length%2==0) ? media.length/2 : media.length}, 1fr);` : ''}>
           {poll}
           {...media}
         </div>
