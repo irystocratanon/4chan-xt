@@ -178,7 +178,6 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
             <span class="fxt-meta_author_username">{tweet.author.name}</span>
             <span class="fxt-meta_author_account">@{tweet.author.screen_name}</span>
           </div>
-          {/*<a href={tweet.url} title="Open tweet in a new tab"><i class="fa-solid fa-up-right-from-square"></i></a> */}
         </a>
         {(topTranslation) ? translation : ''}
         <div class="fxt-text">{tweet.text}</div>
@@ -189,7 +188,7 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
         </div>
         {quote}
         <div class="fxt-stats">
-          <div class="fxt-stats_time">{created_at}</div>
+          <div class="fxt-stats_time"><a href={tweet.url} target="_blank" referrerpolicy="no-referrer">{created_at}</a></div>
           <div class="fxt-stats_meta">
             <a href={`https://twitter.com/intent/tweet?in_reply_to=${tweet.id}`} target="_blank" referrerpolicy="no-referrer">
               <span class="fxt-replies">
