@@ -92,12 +92,6 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
         {pollChoices}
         <div class="total-votes">{tweet.poll.total_votes.toLocaleString()} votes</div>
       </div>;
-
-      // u00A0 is nbsp, u00B7 is &CenterDot;
-      return <>
-        <ul>{...tweet.poll.choices.map(choice => <li>{choice.label} / {choice.percentage}%</li>)}</ul>
-        {`${tweet.poll.total_votes || 0}\u00A0votes \u00B7 ${tweet.poll.time_left_en || ''}`}
-      </>
     }
 
     const topTranslation: boolean = (tweet?.translation?.source_lang != tweet?.translation?.target_lang && tweet?.quote?.translation?.source_lang != tweet?.quote?.translation?.target_lang);
@@ -221,20 +215,6 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
     }
 
     const innerHTML: EscapedHtml = <>{...repliesJsx}{renderArticle(tweet)}</>;
-
-
-    /*<>
-      {...repliesJsx}
-      <p lang={tweet.lang || 'en'} dir="ltr">{tweet.text}</p>
-      {...media}
-      {poll}
-      {translation}
-      {quote}
-      <hr />
-      &mdash; {tweet.author.name} (@{tweet.author.screen_name}) {created_at}
-      <br />
-      {Icon.raw("comment")}{tweet?.replies || 0}&nbsp;{Icon.raw("shuffle")}{tweet?.retweets || 0}&nbsp;{Icon.raw("heart")}{tweet?.likes || 0}
-    </>;*/
 
     el.innerHTML = innerHTML.innerHTML;
     const linkifyNodes = [
