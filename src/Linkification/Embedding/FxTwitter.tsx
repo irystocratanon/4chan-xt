@@ -81,15 +81,15 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
       });
 
       const pollChoices = tweet.poll.choices.map((choice, index) =>
-        <div class={`choice ${index === maxChoiceIndex ? 'highlight' : ''}`}>
-          <span class="choice_label">{choice.label}</span>
-          <span class="choice_percentage">{choice.percentage}%</span>
+        <div class={`fxt-choice ${index === maxChoiceIndex ? 'highlight' : ''}`}>
+          <span class="fxt-choice_label">{choice.label}</span>
+          <span class="fxt-choice_percentage">{choice.percentage}%</span>
           <div class="bar" style={`width: ${choice.percentage}%`} />
         </div>
       );
 
-      return <div class="tweet-poll">
-        {pollChoices}
+      return <div class="fxt-poll">
+        {...pollChoices}
         <div class="total-votes">{tweet.poll.total_votes.toLocaleString()} votes</div>
       </div>;
     }
