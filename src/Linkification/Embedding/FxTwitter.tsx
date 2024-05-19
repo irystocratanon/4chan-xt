@@ -118,21 +118,42 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
       </>
     }
 
-    function renderTranslation(tweet): EscapedHtml | '' {
+    const topTranslation: boolean = (tweet?.translation?.source_lang != tweet?.translation?.target_lang && tweet?.quote?.translation?.source_lang != tweet?.quote?.translation?.target_lang);
+
+    function renderTranslation(tweet, quote = false): EscapedHtml | '' {
       if (tweet?.translation?.source_lang === tweet?.translation?.target_lang) {
         return '';
       }
+      const quote_translation = (!topTranslation || quote || !tweet?.quote?.translation) ? '' : <div class="fxt-quote">
+        <div class="fxt-quote-meta">
+          <a class="fxt-quote_meta_profile" href={tweet.quote.author.url} title={tweet.quote.author.description} target="_blank" referrerpolicy="no-referrer">
+            <img src={tweet.quote.author.avatar_url} referrerpolicy="no-referrer" />
+          </a>
+          <a href={tweet.quote.url} target="_blank" referrerpolicy="no-referrer">
+            <div class="fxt-quote_meta_author">
+              <span class="fxt-quote_meta_author_username">{tweet.quote.author.name}</span>
+              <span class="fxt-quote_meta_author_account">@{tweet.quote.author.screen_name}</span>
+            </div>
+          </a>
+        </div>
+        <div class="fxt-quote-translation-text">
+        <p>Translated from {tweet?.quote?.translation?.source_lang_en || ''}</p>
+        {tweet?.quote?.translation?.text || ''}
+        </div></div>
       return <>
-        <hr />
+        <div class={(!topTranslation) ? "fxt-quote-translation-text" : "fxt-translation-text"}>
         <p>Translated from {tweet?.translation?.source_lang_en || ''}</p>
-        <p lang="en" dir="ltr">{tweet?.translation?.text || ''}</p>
+        {tweet?.translation?.text || ''}
+        </div>{quote_translation}
       </>
     }
+
+    const translation = (shouldTranslate) ? renderTranslation(tweet) : '';
 
     function renderQuote(tweet, renderNested = false): EscapedHtml {
       const quote_nested = (tweet?.quote && renderNested) ? renderQuote(tweet.quote, false) : '';
       const quote_poll = (tweet?.poll) ? renderPoll(tweet) : ''
-      const quote_translation = (shouldTranslate) ? renderTranslation(tweet) : '';
+      const quote_translation = (shouldTranslate && !topTranslation) ? renderTranslation(tweet, true) : '';
       const media = tweet.media.all ? renderMedia(tweet) : [];
 
       return <div class="fxt-quote">
@@ -141,12 +162,15 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
             referrerpolicy="no-referrer">
             <img src={tweet.author.avatar_url} referrerpolicy="no-referrer" />
           </a>
-          <div class="fxt-quote_meta_author">
-            <span class="fxt-quote_meta_author_username">{tweet.author.name}</span>
-            <span class="fxt-quote_meta_author_account">@{tweet.author.screen_name}</span>
-          </div>
+          <a href={tweet.url} referrerpolicy="no-referrer">
+            <div class="fxt-quote_meta_author">
+              <span class="fxt-quote_meta_author_username">{tweet.author.name}</span>
+              <span class="fxt-quote_meta_author_account">@{tweet.author.screen_name}</span>
+            </div>
+          </a>
         </div>
         <div class="fxt-quote-text">{tweet.text}</div>
+        {(!topTranslation) ? quote_translation : ''}
         <div class="fxt-quote_media_container">
           {quote_poll}
           {...media}
@@ -184,9 +208,6 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
     const poll = (tweet?.poll) ? renderPoll(tweet) : '';
     const created_at = renderDate(tweet);
 
-    // TODO
-    // const translation = (shouldTranslate) ? renderTranslation(tweet) : '';
-
     const innerHTML: EscapedHtml = <article class="fxt-card">
       <a class="fxt-meta"  href={tweet.author.url} title={tweet.author.description} target="_blank"
         referrerpolicy="no-referrer">
@@ -199,7 +220,9 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
         </div>
         {/*<a href={tweet.url} title="Open tweet in a new tab"><i class="fa-solid fa-up-right-from-square"></i></a> */}
       </a>
+      {(topTranslation) ? translation : ''}
       <div class="fxt-text">{tweet.text}</div>
+      {(!topTranslation) ? translation : ''}
       <div class="fxt-media_container">
         {poll}
         {...media}
@@ -251,7 +274,13 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
     // Linkify.process(el.firstChild);
 
     el.innerHTML = innerHTML.innerHTML;
-    for (const textNode of [...el.getElementsByClassName('fxt-text'), ...el.getElementsByClassName('fxt-quote-text')]) {
+    const linkifyNodes = [
+      ...el.getElementsByClassName('fxt-text'),
+      ...el.getElementsByClassName('fxt-quote-text'),
+      ...el.getElementsByClassName('fxt-translation-text'),
+      ...el.getElementsByClassName('fxt-quote-translation-text'),
+    ]
+    for (const textNode of [...linkifyNodes]) {
       Linkify.process(textNode);
     }
     el.style.height = 'fit-content';
