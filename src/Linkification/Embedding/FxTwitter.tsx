@@ -124,8 +124,6 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
       </>
     }
 
-    const translation = (shouldTranslate) ? renderTranslation(tweet) : '';
-
     function renderQuote(tweet, renderNested = false): EscapedHtml {
       const quote_nested = (tweet?.quote && renderNested) ? renderQuote(tweet.quote, false) : '';
       const quote_poll = (tweet?.poll) ? renderPoll(tweet) : ''
@@ -158,11 +156,13 @@ export default function EmbedFxTwitter(a: HTMLAnchorElement): HTMLElement {
     if (replies.length > 1) {
       repliesJsx.push({ innerHTML: "<em>Replying To</em><br/>", [isEscaped]: true });
       for (let i = replies.length - 1; i > 0; i--) {
+        console.log('reply: ', replies[i])
         repliesJsx.push(renderArticle(replies[i]));
       }
     }
 
     function renderArticle(tweet): EscapedHtml {
+      const translation = (shouldTranslate) ? renderTranslation(tweet) : '';
       const media = renderMedia(tweet);
       const quote = (tweet?.quote) ? renderQuote(tweet.quote) : ''
 
